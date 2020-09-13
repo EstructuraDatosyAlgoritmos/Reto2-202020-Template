@@ -35,6 +35,25 @@ es decir contiene los modelos con los datos en memoria
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
+def newCatalog():
+    """ Inicializa el catálogo de libros
+
+    Crea una lista vacia para guardar todos los libros
+
+    Se crean indices (Maps) por los siguientes criterios:
+    Autores
+    ID libros
+    Tags
+    Año de publicacion
+
+    Retorna el catalogo inicializado.
+    """
+    catalog = {'books': None,
+               'bookIds': None,
+               'authors': None,
+               'tags': None,
+               'tagIds': None,
+               'years': None}
 
 
 # Funciones para agregar informacion al catalogo

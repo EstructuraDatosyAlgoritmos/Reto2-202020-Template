@@ -38,8 +38,8 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-
-
+moviesCastingFile = 'Movies/MoviesCastingRaw-small.csv'
+moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
 
 
 # ___________________________________________________
