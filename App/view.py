@@ -53,3 +53,42 @@ moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+
+
+def printMenu():
+    print("Bienvenido")
+    print("1- Inicializar Catálogo")
+    print("2- Cargar información en el catálogo")
+    print("3- ")
+    print("4- ")
+    print("5- ")
+    print("0- Salir")
+
+"""
+Menu principal
+"""
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n')
+
+    if int(inputs[0]) == 1:
+        print("Inicializando Catálogo ....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.initCatalog()
+
+    elif int(inputs[0]) == 2:
+        print("Cargando información de los archivos ....")
+        controller.loadData(cont, booksfile, tagsfile, booktagsfile)
+        print('Libros cargados: ' + str(controller.booksSize(cont)))
+        print('Autores cargados: ' + str(controller.authorsSize(cont)))
+        print('Géneros cargados: ' + str(controller.tagsSize(cont)))
+
+    elif int(inputs[0]) == 3:
+
+    elif int(inputs[0]) == 4:
+
+    elif int(inputs[0]) == 5:
+
+    else:
+        sys.exit(0)
+sys.exit(0)
