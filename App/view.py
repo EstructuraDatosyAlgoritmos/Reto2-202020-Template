@@ -48,6 +48,20 @@ moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
 #  el controlador.
 # ___________________________________________________
 
+def printProducerData(producer):
+    """
+    Imprime las películas de una productora determinada
+    """
+    if producer:
+        print('Productora encontrada: ' + producer['name'])
+        print('Promedio votación películas: ' + str(producer['average_rating']))
+        print('Total de películas: ' + str(lt.size(producer['movies'])))
+        iterator = it.newIterator(producer['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['average_rating'])
+    else:
+        print('No se encontro la productora')
 
 
 # ___________________________________________________
@@ -59,9 +73,9 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Catálogo")
     print("2- Cargar información en el catálogo")
-    print("3- ")
-    print("4- ")
-    print("5- ")
+    print("3- REQ1: Descubrir productoras de cine.")
+ #   print("4- ")
+ #   print("5- ")
     print("0- Salir")
 
 """
@@ -78,16 +92,18 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        controller.loadData(cont, booksfile, tagsfile, booktagsfile)
-        print('Libros cargados: ' + str(controller.booksSize(cont)))
-        print('Autores cargados: ' + str(controller.authorsSize(cont)))
-        print('Géneros cargados: ' + str(controller.tagsSize(cont)))
+        controller.loadData(cont, moviesCastingFile , moviesDetailsFile)
+        print('Películas cargadas: ' + str(controller.moviesSize(cont)))
+        print('Productoras cargados: ' + str(controller.producersSize(cont)))
+        #print('Géneros cargados: ' + str(controller.tagsSize(cont)))
 
     elif int(inputs[0]) == 3:
+        producername = input("Nombre de la productora a buscar: ")
+        producerinfo = controller.getMoviesByProducer(cont, producername)
+        printProducerData(producerinfo)
 
-    elif int(inputs[0]) == 4:
-
-    elif int(inputs[0]) == 5:
+#    elif int(inputs[0]) == 4:
+#    elif int(inputs[0]) == 5:
 
     else:
         sys.exit(0)

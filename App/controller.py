@@ -54,7 +54,7 @@ def loadData(catalog, moviesCastingFile,moviesDetailsFile):
     """
     Carga los datos de los archivos en el modelo
     """
-    loadCasting(catalog, moviesCastingFile)
+#    loadCasting(catalog, moviesCastingFile)
     loadDetails(catalog, moviesDetailsFile)
 
 def loadDetails(catalog, moviesDetailsFile):
@@ -72,16 +72,16 @@ def loadDetails(catalog, moviesDetailsFile):
         for producer in producers:
             model.addMovieFilmProducer(catalog, producer.strip(), movie)
 
-"""
+
 def loadCasting(catalog, moviesCastingFile):
-    """
+    
     """
     Carga cada una de las lineas del archivo de libros.
    - Se agrega cada libro al catalogo de libros
     - Por cada libro se encuentran sus autores y por cada
       autor, se crea una lista con sus libros
     """
-    """
+    
     booksfile = cf.data_dir + booksfile
     input_file = csv.DictReader(open(booksfile,encoding="utf-8-sig"))
     for book in input_file:
@@ -89,7 +89,7 @@ def loadCasting(catalog, moviesCastingFile):
         authors = book['authors'].split(",")  # Se obtienen los autores
         for author in authors:
             model.addBookAuthor(catalog, author.strip(), book)
-"""
+
 
 # ___________________________________________________
 #  Funciones para consultas
