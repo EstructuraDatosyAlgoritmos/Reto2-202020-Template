@@ -192,7 +192,7 @@ def compareProducersByName(keyname, producer):
     prodEntry = me.getKey(producer)
     if (keyname == prodEntry):
         return 0
-    elif (keyname > prodEdntry):
+    elif (keyname > prodEntry):
         return 1
     else:
         return -1
