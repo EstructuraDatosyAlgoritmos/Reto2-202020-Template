@@ -64,8 +64,8 @@ def loadCasting(catalog, moviesCastingFile):
     - Por cada libro se encuentran sus autores y por cada
       autor, se crea una lista con sus libros
     """
-    booksfile = cf.data_dir + booksfile
-    input_file = csv.DictReader(open(booksfile,encoding="utf-8-sig"))
+    moviesCastingFile = cf.data_dir + moviesCastingFile
+    input_file = csv.DictReader(open(moviesCastingFile,encoding="utf-8-sig"))
     for book in input_file:
         model.addBook(catalog, book)
         authors = book['authors'].split(",")  # Se obtienen los autores

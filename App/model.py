@@ -38,7 +38,7 @@ es decir contiene los modelos con los datos en memoria
 def newCatalog():
     """ Inicializa el catálogo de libros
 
-    Crea una lista vacia para guardar todos los libros
+    Crea una lista vacia para guardar todas las películas
 
     Se crean indices (Maps) por los siguientes criterios:
     Autores
@@ -48,26 +48,151 @@ def newCatalog():
 
     Retorna el catalogo inicializado.
     """
-    catalog = {'books': None,
-               'bookIds': None,
-               'authors': None,
+    catalog = {'movies': None,
+               'moviesIds': None,
+               'producers': None,
                'tags': None,
                'tagIds': None,
                'years': None}
 
 
+    catalog['movies'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
+    catalog['moviesIds'] = mp.newMap(200,
+                                   maptype='PROBING',
+                                   loadfactor=0.4,
+                                   comparefunction=compareMapMovieIds)
+    catalog['producers'] = mp.newMap(200,
+                                   maptype='PROBING',
+                                   loadfactor=0.4,
+                                   comparefunction=compareProducersByName)
+#    catalog[''] = mp.newMap(1000,
+#                                maptype='CHAINING',
+#                                loadfactor=0.7,
+#                                comparefunction=compareTagNames)
+#    catalog[''] = mp.newMap(1000,
+#                                  maptype='CHAINING',
+#                                  loadfactor=0.7,
+#                                  comparefunction=compareTagIds)
+#    catalog[''] = mp.newMap(500,
+#                                 maptype='CHAINING',
+#                                 loadfactor=0.7,
+#                                 comparefunction=compareMapYear)
+
+    return catalog
+
+
+
+def newFilmProducer(name):
+    """
+    Crea una nueva estructura para modelar las películas de una productora
+    y su promedio de ratings
+    """
+    producer = {'name': "", "movies": None,  "average_rating": 0}
+    producer['name'] = name
+    producer['movies'] = lt.newList('SINGLE_LINKED', )
+    return producer
+
+
 # Funciones para agregar informacion al catalogo
 
+def addMovie(catalog, movie):
+    """
+    Esta funcion adiciona una película a la lista de películas,
+    adicionalmente lo guarda en un Map usando como llave su Id.
+    """
+    lt.addLast(catalog['movies'], movie)
+    mp.put(catalog['moviesIds'], movie['id'], movie)
+
+
+def addMovieFilmProducer(catalog, producername, movie):
+    """
+    Esta función adiciona una película a la lista de películas producidas
+    por la respectiva productora.
+    Cuando se adiciona la película se actualiza el promedio de dicha productora
+    """
+    producers = catalog['producers']
+    existproducer = mp.contains(producers, producername)
+    if existproducer:
+        entry = mp.get(producers, producername)
+        producer = me.getValue(entry)
+    else:
+        producer = newFilmProducer(producername)
+        mp.put(producers, producername, producer)
+    lt.addLast(producer['movies'], movie)
+
+    producerAvg = producer['average_rating']
+    movieAvg = movie['average_rating']
+    if (producerAvg == 0.0):
+        producer['average_rating'] = float(movieAvg)
+    else:
+        producer['average_rating'] = (producerAvg + float(movieAvg)) / 2
 
 
 # ==============================
 # Funciones de consulta
 # ==============================
 
+def getMoviesByProducer(catalog, producername):
+    """
+    RETO2 - REQ1
+    Retorna una productora con sus películas a partir del nombre de la productora
+    """
+    producer = mp.get(catalog['producers'], producername)
+    if producer:
+        return me.getValue(producer)
+    return None
 
+def moviesSize(catalog):
+    """
+    Número de películas en el catago
+    """
+    return lt.size(catalog['películas'])
+
+
+def producersSize(catalog):
+    """
+    Numero de autores en el catalogo
+    """
+    return mp.size(catalog['producers'])
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
 
+def compareMoviesIds(id1,id2):
+    """
+    Compara dos ids de películas
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+def compareMapMovieIds(id, entry):
+    """
+    Compara dos ids de películas, id es un identificador
+    y entry una pareja llave-valor
+    """
+    identry = me.getKey(entry)
+    if (int(id) == int(identry)):
+        return 0
+    elif (int(id) > int(identry)):
+        return 1
+    else:
+        return -1
+
+def compareProducersByName(keyname, producer):
+    """
+    Compara dos nombres de productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    prodEntry = me.getKey(producer)
+    if (keyname == prodEntry):
+        return 0
+    elif (keyname > prodEdntry):
+        return 1
+    else:
+        return -1
