@@ -22,6 +22,7 @@
 
 import config as cf
 from App import model
+from time import process_time 
 import csv
 
 
@@ -60,10 +61,11 @@ def loadData(catalog,moviesDetailsFile):
 def loadDetails(catalog, moviesDetailsFile):
     """
     Carga cada una de las lineas del archivo de películas.
-    - Se agrega cada libro al catalogo de libros
-    - Por cada libro se encuentran sus autores y por cada
-      autor, se crea una lista con sus libros
+    - Se agrega cada película al catalogo de películas.
+    - Por cada película se encuentra su productora y por cada
+      productora, se crea una lista con sus películas
     """
+    t1_start = process_time() #tiempo inicial
     moviesDetailsFile = cf.data_dir + moviesDetailsFile
     input_file = csv.DictReader(open(moviesDetailsFile,encoding="utf-8-sig"),delimiter=";")
     for movie in input_file:
@@ -71,7 +73,8 @@ def loadDetails(catalog, moviesDetailsFile):
         producers = movie['production_companies'].split(",")  
         for producer in producers:
             model.addMovieFilmProducer(catalog, producer.strip(), movie)
-
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
 
 def loadCasting(catalog, moviesCastingFile):
     
@@ -103,7 +106,7 @@ def moviesSize(catalog):
 
 def producersSize(catalog):
     """
-    Numero de libros leido
+    Numero de productoras leido
     """
     return model.producersSize(catalog)
 

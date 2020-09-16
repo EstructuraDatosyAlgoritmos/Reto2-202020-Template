@@ -22,6 +22,7 @@
 import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
+from time import process_time 
 from DISClib.DataStructures import mapentry as me
 assert config
 
@@ -55,15 +56,15 @@ def newCatalog():
                'tagIds': None,
                'years': None}
 
-
+    t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
-    catalog['moviesIds'] = mp.newMap(2050,
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
+    catalog['moviesIds'] = mp.newMap(1000,
+                                   maptype='CHAINING',
+                                   loadfactor=2,
                                    comparefunction=compareMapMovieIds)
-    catalog['producers'] = mp.newMap(1000,
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
+    catalog['producers'] = mp.newMap(500,
+                                   maptype='CHAINING',
+                                   loadfactor=2,
                                    comparefunction=compareProducersByName)
 #    catalog[''] = mp.newMap(1000,
 #                                maptype='CHAINING',
@@ -78,6 +79,8 @@ def newCatalog():
 #                                 loadfactor=0.7,
 #                                 comparefunction=compareMapYear)
 
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return catalog
 
 
@@ -137,8 +140,11 @@ def getMoviesByProducer(catalog, producername):
     RETO2 - REQ1
     Retorna una productora con sus películas a partir del nombre de la productora
     """
+    t1_start = process_time() #tiempo inicial
     producer = mp.get(catalog['producers'], producername)
     if producer:
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
         return me.getValue(producer)
     return None
 
@@ -151,7 +157,7 @@ def moviesSize(catalog):
 
 def producersSize(catalog):
     """
-    Numero de autores en el catalogo
+    Numero de productoras en el catalogo
     """
     return mp.size(catalog['producers'])
 
