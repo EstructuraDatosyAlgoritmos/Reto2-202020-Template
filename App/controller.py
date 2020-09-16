@@ -50,7 +50,7 @@ def initCatalog():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(catalog, moviesCastingFile,moviesDetailsFile):
+def loadData(catalog,moviesDetailsFile):
     """
     Carga los datos de los archivos en el modelo
     """
@@ -65,10 +65,10 @@ def loadDetails(catalog, moviesDetailsFile):
       autor, se crea una lista con sus libros
     """
     moviesDetailsFile = cf.data_dir + moviesDetailsFile
-    input_file = csv.DictReader(open(moviesDetailsFile,encoding="utf-8-sig"))
+    input_file = csv.DictReader(open(moviesDetailsFile,encoding="utf-8-sig"),delimiter=";")
     for movie in input_file:
         model.addMovie(catalog, movie)
-        producers = movie['producers'].split(",")  
+        producers = movie['production_companies'].split(",")  
         for producer in producers:
             model.addMovieFilmProducer(catalog, producer.strip(), movie)
 

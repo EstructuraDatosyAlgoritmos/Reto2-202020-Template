@@ -59,7 +59,7 @@ def printProducerData(producer):
         iterator = it.newIterator(producer['movies'])
         while it.hasNext(iterator):
             movie = it.next(iterator)
-            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['average_rating'])
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
     else:
         print('No se encontro la productora')
 
@@ -92,9 +92,9 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        controller.loadData(cont, moviesCastingFile , moviesDetailsFile)
+        controller.loadData(cont,moviesDetailsFile)
         print('Películas cargadas: ' + str(controller.moviesSize(cont)))
-        print('Productoras cargados: ' + str(controller.producersSize(cont)))
+        print('Productoras de Cine cargadas: ' + str(controller.producersSize(cont)))
         #print('Géneros cargados: ' + str(controller.tagsSize(cont)))
 
     elif int(inputs[0]) == 3:

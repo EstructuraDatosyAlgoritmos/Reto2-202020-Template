@@ -57,11 +57,11 @@ def newCatalog():
 
 
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
-    catalog['moviesIds'] = mp.newMap(200,
+    catalog['moviesIds'] = mp.newMap(2050,
                                    maptype='PROBING',
                                    loadfactor=0.4,
                                    comparefunction=compareMapMovieIds)
-    catalog['producers'] = mp.newMap(200,
+    catalog['producers'] = mp.newMap(100000,
                                    maptype='PROBING',
                                    loadfactor=0.4,
                                    comparefunction=compareProducersByName)
@@ -121,11 +121,11 @@ def addMovieFilmProducer(catalog, producername, movie):
     lt.addLast(producer['movies'], movie)
 
     producerAvg = producer['average_rating']
-    movieAvg = movie['average_rating']
+    movieAvg = movie['vote_average']
     if (producerAvg == 0.0):
         producer['average_rating'] = float(movieAvg)
     else:
-        producer['average_rating'] = (producerAvg + float(movieAvg)) / 2
+        producer['average_rating'] = round((producerAvg + float(movieAvg)) / 2,2)
 
 
 # ==============================
@@ -146,7 +146,7 @@ def moviesSize(catalog):
     """
     Número de películas en el catago
     """
-    return lt.size(catalog['películas'])
+    return lt.size(catalog['movies'])
 
 
 def producersSize(catalog):
