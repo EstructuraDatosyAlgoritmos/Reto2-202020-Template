@@ -74,8 +74,10 @@ def printMenu():
     print("1- Inicializar Catálogo")
     print("2- Cargar información en el catálogo")
     print("3- REQ1: Descubrir productoras de cine.")
- #   print("4- ")
- #   print("5- ")
+ #   print("4- REQ2: Conocer a un director. ")
+ #   print("5- REQ3: Conocer a un actor.")
+ #   print("6- REQ4: Entender un género cinematográfico.")
+ #   print("7- REQ5: Encontrar películas por país.")
     print("0- Salir")
 
 """

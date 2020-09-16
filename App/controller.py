@@ -105,7 +105,7 @@ def producersSize(catalog):
     """
     Numero de libros leido
     """
-    return model.producersSize
+    return model.producersSize(catalog)
 
 def getMoviesByProducer(catalog,producername):
     """
