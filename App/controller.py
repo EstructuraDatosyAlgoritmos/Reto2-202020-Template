@@ -51,13 +51,13 @@ def initCatalog():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadData(catalog,moviesDetailsFile):
+def loadData(catalog,moviesDetailsFile,moviesCastingFile):
     """
     Carga los datos de los archivos en el modelo
     """
-#    loadCasting(catalog, moviesCastingFile)
     loadDetails(catalog, moviesDetailsFile)
-
+    loadCasting(catalog, moviesCastingFile)
+    
 def loadDetails(catalog, moviesDetailsFile):
     """
     Carga cada una de las lineas del archivo de películas.
@@ -79,21 +79,22 @@ def loadDetails(catalog, moviesDetailsFile):
 def loadCasting(catalog, moviesCastingFile):
     
     """
-    Carga cada una de las lineas del archivo de libros.
+    Carga cada una de las lineas del archivo de películas.
    - Se agrega cada libro al catalogo de libros
     - Por cada libro se encuentran sus autores y por cada
       autor, se crea una lista con sus libros
     """
-    
-    booksfile = cf.data_dir + booksfile
-    input_file = csv.DictReader(open(booksfile,encoding="utf-8-sig"))
-    for book in input_file:
-        model.addBook(catalog, book)
-        authors = book['authors'].split(",")  # Se obtienen los autores
-        for author in authors:
-            model.addBookAuthor(catalog, author.strip(), book)
+    t1_start = process_time() #tiempo inicial
+    moviesCastingFile = cf.data_dir + moviesCastingFile
+    input_file = csv.DictReader(open(moviesCastingFile,encoding="utf-8-sig"),delimiter=";")
+    for movie in input_file:
+        directors = movie['director_name'].split(",") 
+        movie_id = movie['id']
+        for director in directors:
+            model.addDirector(catalog, director.strip(), movie)
 
-
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
@@ -112,7 +113,16 @@ def producersSize(catalog):
 
 def getMoviesByProducer(catalog,producername):
     """
+    RETO2 - REQ1
     Retorna las películas de una productora
     """
     producerinfo = model.getMoviesByProducer(catalog,producername)
     return producerinfo
+
+def getMoviesByDirector(catalog,directorname):
+    """
+    RETO2 - REQ2
+    Retorna las películas de una productora
+    """
+    directorinfo = model.getMoviesByDirector(catalog,directorname)
+    return directorinfo

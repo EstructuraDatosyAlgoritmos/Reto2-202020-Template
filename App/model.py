@@ -66,18 +66,23 @@ def newCatalog():
                                    maptype='CHAINING',
                                    loadfactor=2,
                                    comparefunction=compareProducersByName)
-#    catalog[''] = mp.newMap(1000,
-#                                maptype='CHAINING',
-#                                loadfactor=0.7,
-#                                comparefunction=compareTagNames)
-#    catalog[''] = mp.newMap(1000,
+    catalog['directors'] = mp.newMap(500,
+                                maptype='CHAINING',
+                                loadfactor=2,
+                                comparefunction=compareDirectorsByName)
+#    catalog['actors'] = mp.newMap(1000,
 #                                  maptype='CHAINING',
 #                                  loadfactor=0.7,
 #                                  comparefunction=compareTagIds)
-#    catalog[''] = mp.newMap(500,
+#    catalog['genres'] = mp.newMap(500,
 #                                 maptype='CHAINING',
 #                                 loadfactor=0.7,
 #                                 comparefunction=compareMapYear)
+#    catalog['countries'] = mp.newMap(500,
+#                                 maptype='CHAINING',
+#                                 loadfactor=0.7,
+#                                 comparefunction=compareMapYear)
+
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -87,6 +92,7 @@ def newCatalog():
 
 def newFilmProducer(name):
     """
+    RETO2 - REQ1
     Crea una nueva estructura para modelar las películas de una productora
     y su promedio de ratings
     """
@@ -95,6 +101,16 @@ def newFilmProducer(name):
     producer['movies'] = lt.newList('SINGLE_LINKED', )
     return producer
 
+def newDirector(name):
+    """
+    RETO2 - REQ2
+    Crea una nueva estructura para modelar las películas de una productora
+    y su promedio de ratings
+    """
+    director = {'name': "", "movies": None,  "average_rating": 0}
+    director['name'] = name
+    director['movies'] = lt.newList('SINGLE_LINKED', )
+    return director
 
 # Funciones para agregar informacion al catalogo
 
@@ -109,6 +125,7 @@ def addMovie(catalog, movie):
 
 def addMovieFilmProducer(catalog, producername, movie):
     """
+    RETO2 - REQ1
     Esta función adiciona una película a la lista de películas producidas
     por la respectiva productora.
     Cuando se adiciona la película se actualiza el promedio de dicha productora
@@ -120,7 +137,7 @@ def addMovieFilmProducer(catalog, producername, movie):
         producer = me.getValue(entry)
     else:
         producer = newFilmProducer(producername)
-        mp.put(producers, producername, producer)
+        mp.put(producers, producername, producer)   
     lt.addLast(producer['movies'], movie)
 
     producerAvg = producer['average_rating']
@@ -130,6 +147,38 @@ def addMovieFilmProducer(catalog, producername, movie):
     else:
         producer['average_rating'] = round((producerAvg + float(movieAvg)) / 2,2)
 
+def addDirector(catalog,directorname,movie):
+    """
+    RETO2 - REQ2
+    Esta función adiciona una película a la lista de películas dirigidas
+    por el respectivo director.
+    Cuando se adiciona la película se actualiza el promedio de dicho director
+    """
+    directors = catalog['directors']
+    movies_ids = catalog['moviesIds']
+    existdirector = mp.contains(directors,directorname)
+
+    if existdirector:
+        entry = mp.get(directors,directorname)
+        director = me.getValue(entry)
+    
+    else:
+        director = newDirector(directorname)
+        
+        mp.put(directors,directorname,movie)      
+    lt.addLast(director['movies'], movie)
+
+
+    directorAvg = director['average_rating']
+
+    entry = mp.get(movies_ids,movie_id)
+    movie = me.getKey(entry)
+
+    movieAvg = movie['vote_average']
+    if (directorAvg == 0.0):
+        director['average_rating'] = float(movieAvg)
+    else:
+        director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
 
 # ==============================
 # Funciones de consulta
@@ -146,6 +195,19 @@ def getMoviesByProducer(catalog, producername):
         t1_stop = process_time() #tiempo final
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
         return me.getValue(producer)
+    return None
+
+def getMoviesByDirector(catalog,directorname):
+    """
+    RETO2 - REQ2
+    Retorna un director con sus películas a partir del nombre ingresado
+    """
+    t1_start = process_time() #tiempo inicial
+    director = mp.get(catalog['directors'], directorname)
+    if director:
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
+        return me.getValue(director)
     return None
 
 def moviesSize(catalog):
@@ -192,6 +254,7 @@ def compareMapMovieIds(id, entry):
 
 def compareProducersByName(keyname, producer):
     """
+    RETO2 - REQ1
     Compara dos nombres de productoras. El primero es una cadena
     y el segundo un entry de un map
     """
@@ -199,6 +262,21 @@ def compareProducersByName(keyname, producer):
     if (keyname == prodEntry):
         return 0
     elif (keyname > prodEntry):
+        return 1
+    else:
+        return -1
+
+def compareDirectorsByName(keyname, director):
+    """
+    RETO2 - REQ2
+    Compara dos nombres de directores. El primero es una cadena
+    y el segundo un entry de un map
+    """
+
+    direcEntry = me.getKey(director)
+    if (keyname == direcEntry):
+        return 0
+    elif (keyname > direcEntry):
         return 1
     else:
         return -1

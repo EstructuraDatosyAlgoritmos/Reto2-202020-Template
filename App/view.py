@@ -50,6 +50,7 @@ moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
 
 def printProducerData(producer):
     """
+    RETO2 - REQ1
     Imprime las películas de una productora determinada
     """
     if producer:
@@ -61,8 +62,23 @@ def printProducerData(producer):
             movie = it.next(iterator)
             print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
     else:
-        print('No se encontro la productora')
+        print('No se encontró la productora.')
 
+def printDirectorData(director):
+    """
+    RETO2 - REQ2
+    Imprime las películas de un director determinado
+    """
+    if director:
+        print('Director encontrado: ' + director['name'])
+        print('Promedio votación películas: ' + str(director['average_rating']))
+        print('Total de películas: ' + str(lt.size(director['movies'])))
+        iterator = it.newIterator(director['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
+    else:
+        print('No se encontró el director.')
 
 # ___________________________________________________
 #  Menu principal
@@ -74,7 +90,7 @@ def printMenu():
     print("1- Inicializar Catálogo")
     print("2- Cargar información en el catálogo")
     print("3- REQ1: Descubrir productoras de cine.")
- #   print("4- REQ2: Conocer a un director. ")
+    print("4- REQ2: Conocer a un director. ")
  #   print("5- REQ3: Conocer a un actor.")
  #   print("6- REQ4: Entender un género cinematográfico.")
  #   print("7- REQ5: Encontrar películas por país.")
@@ -94,7 +110,7 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        controller.loadData(cont,moviesDetailsFile)
+        controller.loadData(cont,moviesDetailsFile,moviesCastingFile)
         print('Películas cargadas: ' + str(controller.moviesSize(cont)))
         print('Productoras de Cine cargadas: ' + str(controller.producersSize(cont)))
         #print('Géneros cargados: ' + str(controller.tagsSize(cont)))
@@ -104,7 +120,11 @@ while True:
         producerinfo = controller.getMoviesByProducer(cont, producername)
         printProducerData(producerinfo)
 
-#    elif int(inputs[0]) == 4:
+    elif int(inputs[0]) == 4:
+        directorname =  input("Ingrese el nombre del director a buscar: ")
+        directorinfo = controller.getMoviesByDirector(cont, directorname)
+        printDirectorData(directorinfo)
+
 #    elif int(inputs[0]) == 5:
 
     else:
