@@ -98,7 +98,7 @@ def newFilmProducer(name):
     """
     producer = {'name': "", "movies": None,  "average_rating": 0}
     producer['name'] = name
-    producer['movies'] = lt.newList('SINGLE_LINKED', )
+    producer['movies'] = lt.newList('SINGLE_LINKED',compareProducersByName )
     return producer
 
 def newDirector(name):
@@ -109,7 +109,7 @@ def newDirector(name):
     """
     director = {'name': "", "movies": None,  "average_rating": 0}
     director['name'] = name
-    director['movies'] = lt.newList('SINGLE_LINKED', )
+    director['movies'] = lt.newList('SINGLE_LINKED',compareDirectorsByName )
     return director
 
 # Funciones para agregar informacion al catalogo
@@ -147,7 +147,7 @@ def addMovieFilmProducer(catalog, producername, movie):
     else:
         producer['average_rating'] = round((producerAvg + float(movieAvg)) / 2,2)
 
-def addDirector(catalog,directorname,movie):
+def addDirector(catalog,directorname,movie_id):
     """
     RETO2 - REQ2
     Esta función adiciona una película a la lista de películas dirigidas
@@ -156,24 +156,19 @@ def addDirector(catalog,directorname,movie):
     """
     directors = catalog['directors']
     movies_ids = catalog['moviesIds']
+    entry = mp.get(movies_ids,movie_id)
+    movie = me.getValue(entry)
+    
     existdirector = mp.contains(directors,directorname)
-
     if existdirector:
         entry = mp.get(directors,directorname)
         director = me.getValue(entry)
-    
     else:
         director = newDirector(directorname)
-        
-        mp.put(directors,directorname,movie)      
+        mp.put(directors,directorname,director)      
     lt.addLast(director['movies'], movie)
 
-
     directorAvg = director['average_rating']
-
-    entry = mp.get(movies_ids,movie_id)
-    movie = me.getKey(entry)
-
     movieAvg = movie['vote_average']
     if (directorAvg == 0.0):
         director['average_rating'] = float(movieAvg)
