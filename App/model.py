@@ -42,9 +42,9 @@ def newCatalog():
     Crea una lista vacia para guardar todas las películas
 
     Se crean indices (Maps) por los siguientes criterios:
-    Autores
-    ID libros
-    Tags
+    Movies Ids
+    Producers
+    
     Año de publicacion
 
     Retorna el catalogo inicializado.
@@ -52,12 +52,11 @@ def newCatalog():
     catalog = {'movies': None,
                'moviesIds': None,
                'producers': None,
-               'tags': None,
-               'tagIds': None,
-               'years': None}
+               'directors': None,
+               'countries': None}
 
     t1_start = process_time() #tiempo inicial
-    catalog['movies'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
+    catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
     catalog['moviesIds'] = mp.newMap(1000,
                                    maptype='CHAINING',
                                    loadfactor=2,
@@ -78,10 +77,10 @@ def newCatalog():
 #                                 maptype='CHAINING',
 #                                 loadfactor=0.7,
 #                                 comparefunction=compareMapYear)
-#    catalog['countries'] = mp.newMap(500,
-#                                 maptype='CHAINING',
-#                                 loadfactor=0.7,
-#                                 comparefunction=compareMapYear)
+    catalog['countries'] = mp.newMap(500,
+                                 maptype='CHAINING',
+                                 loadfactor=2,
+                                 comparefunction=compareCountriesByName)
 
 
     t1_stop = process_time() #tiempo final
@@ -112,6 +111,17 @@ def newDirector(name):
     director['movies'] = lt.newList('SINGLE_LINKED',compareDirectorsByName )
     return director
 
+def newCountry(name):
+    """
+    RETO2 - REQ5
+    Crea una nueva estructura para modelar las películas de un país
+    """
+    country = {'name': "", "movies": None}
+    country['name'] = name
+    country['movies'] = lt.newList('ARRAY_LIST',compareCountriesByName)
+    return country
+
+
 # Funciones para agregar informacion al catalogo
 
 def addMovie(catalog, movie):
@@ -121,7 +131,6 @@ def addMovie(catalog, movie):
     """
     lt.addLast(catalog['movies'], movie)
     mp.put(catalog['moviesIds'], movie['id'], movie)
-
 
 def addMovieFilmProducer(catalog, producername, movie):
     """
@@ -158,7 +167,7 @@ def addDirector(catalog,directorname,movie_id):
     movies_ids = catalog['moviesIds']
     entry = mp.get(movies_ids,movie_id)
     movie = me.getValue(entry)
-    
+
     existdirector = mp.contains(directors,directorname)
     if existdirector:
         entry = mp.get(directors,directorname)
@@ -174,6 +183,39 @@ def addDirector(catalog,directorname,movie_id):
         director['average_rating'] = float(movieAvg)
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
+
+def addCountry(catalog,countryname,movie):
+    """
+    RETO2 - REQ5
+    Esta función adiciona una película a la lista de películas producidas en un país.
+    """
+    countries = catalog['countries']
+    existcountry = mp.contains(countries,countryname)
+    if existcountry:
+        entry = mp.get(countries,countryname)
+        country = me.getValue(entry)
+    else:
+        country = newCountry(countryname)
+        mp.put(countries,countryname,country)
+
+    lt.addLast(country['movies'], movie)
+
+    movies_Ids = catalog['moviesIds']['table']['elements']
+    #print(movies_Ids)
+     
+
+    for id in movies_Ids:
+        country_movies = country['movies']['elements']
+
+        for movie in country_movies:
+            country_movies_id = movie['id']
+            #print("country",country_movies_id)
+            #print("id",id)
+            if country_movies_id == id:
+                print("hola")
+                movie['director_name'] = id['director_name']
+                
+
 
 # ==============================
 # Funciones de consulta
@@ -205,25 +247,49 @@ def getMoviesByDirector(catalog,directorname):
         return me.getValue(director)
     return None
 
+def getMoviesByCountry(catalog,countryname):
+    """
+    RETO2 - REQ5
+    Retorna un país con sus películas a partir del nombre ingresado
+    """
+    t1_start = process_time() #tiempo inicial
+    country = mp.get(catalog['countries'], countryname)
+    if country:
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
+        return me.getValue(country)
+    return None
+
 def moviesSize(catalog):
     """
     Número de películas en el catago
     """
     return lt.size(catalog['movies'])
-
-
 def producersSize(catalog):
     """
+    RETO2 - REQ1
     Numero de productoras en el catalogo
     """
     return mp.size(catalog['producers'])
+def directorsSize(catalog):
+    """
+    RETO2 - REQ2
+    Numero de directores en el catalogo
+    """
+    return mp.size(catalog['directors'])
+def countriesSize(catalog):
+    """
+    RETO2 - REQ5
+    Numero de países en el catalogo
+    """
+    return mp.size(catalog['countries'])
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
 
-def compareMoviesIds(id1,id2):
+def compareMovies(id1,id2):
     """
     Compara dos ids de películas
     """
@@ -272,6 +338,20 @@ def compareDirectorsByName(keyname, director):
     if (keyname == direcEntry):
         return 0
     elif (keyname > direcEntry):
+        return 1
+    else:
+        return -1
+
+def compareCountriesByName(keyname,country):
+    """
+    RETO2 - REQ5
+    Compara dos nombres de países. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    countryEntry = me.getKey(country)
+    if (keyname == countryEntry):
+        return 0
+    elif (keyname > countryEntry):
         return 1
     else:
         return -1

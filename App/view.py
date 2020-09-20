@@ -80,6 +80,21 @@ def printDirectorData(director):
     else:
         print('No se encontró el director.')
 
+def printCountryData(country):
+    """
+    RETO2 - REQ5
+    Imprime las películas de un país determinado
+    """
+    if country:
+        print('País encontrado: ' + country['name'])
+        print('Total de películas: ' + str(lt.size(country['movies'])))
+        iterator = it.newIterator(country['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Director: ' + movie['director_name'] + '  Año de producción: ' + movie['release_date'])
+    else:
+        print('No se encontró el país.')
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -93,7 +108,7 @@ def printMenu():
     print("4- REQ2: Conocer a un director. ")
  #   print("5- REQ3: Conocer a un actor.")
  #   print("6- REQ4: Entender un género cinematográfico.")
- #   print("7- REQ5: Encontrar películas por país.")
+    print("7- REQ5: Encontrar películas por país.")
     print("0- Salir")
 
 """
@@ -113,7 +128,8 @@ while True:
         controller.loadData(cont,moviesDetailsFile,moviesCastingFile)
         print('Películas cargadas: ' + str(controller.moviesSize(cont)))
         print('Productoras de Cine cargadas: ' + str(controller.producersSize(cont)))
-        #print('Géneros cargados: ' + str(controller.tagsSize(cont)))
+        print('Directores de Cine cargados: ' + str(controller.directorsSize(cont)))
+        print('Países cargados: ' + str(controller.countriesSize(cont)))
 
     elif int(inputs[0]) == 3:
         producername = input("Nombre de la productora a buscar: ")
@@ -126,6 +142,11 @@ while True:
         printDirectorData(directorinfo)
 
 #    elif int(inputs[0]) == 5:
+#    elif int(inputs[0]) == 6:
+    elif int(inputs[0]) == 7:
+        countryname = input("Ingrese el nombre del país a buscar: ")
+        countryinfo = controller.getMoviesByCountry(cont,countryname)
+        printCountryData(countryinfo)
 
     else:
         sys.exit(0)

@@ -71,13 +71,16 @@ def loadDetails(catalog, moviesDetailsFile):
     for movie in input_file:
         model.addMovie(catalog, movie)
         producers = movie['production_companies'].split(",")  
+        countries = movie['production_countries'].split(",") 
         for producer in producers:
             model.addMovieFilmProducer(catalog, producer.strip(), movie)
+        for country in countries:
+            model.addCountry(catalog,country.strip(),movie)
+
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
 
 def loadCasting(catalog, moviesCastingFile):
-    
     """
     Carga cada una de las lineas del archivo de películas.
    - Se agrega cada libro al catalogo de libros
@@ -104,12 +107,25 @@ def moviesSize(catalog):
     Numero de películas leido
     """
     return model.moviesSize(catalog)
-
 def producersSize(catalog):
     """
+    RETO2 - REQ1
     Numero de productoras leido
     """
     return model.producersSize(catalog)
+def directorsSize(catalog):
+    """
+    RETO2 - REQ2
+    Numero de directores leido
+    """
+    return model.directorsSize(catalog)
+def countriesSize(catalog):
+    """
+    RETO2 - REQ5
+    Numero de países leido
+    """ 
+    return model.countriesSize(catalog)
+  
 
 def getMoviesByProducer(catalog,producername):
     """
@@ -118,7 +134,6 @@ def getMoviesByProducer(catalog,producername):
     """
     producerinfo = model.getMoviesByProducer(catalog,producername)
     return producerinfo
-
 def getMoviesByDirector(catalog,directorname):
     """
     RETO2 - REQ2
@@ -126,3 +141,10 @@ def getMoviesByDirector(catalog,directorname):
     """
     directorinfo = model.getMoviesByDirector(catalog,directorname)
     return directorinfo
+def getMoviesByCountry(catalog,countryname):
+    """
+    RETO2 - REQ5
+    Retorna las películas de un país
+    """
+    countryinfo = model.getMoviesByCountry(catalog,countryname)
+    return countryinfo
