@@ -132,7 +132,7 @@ def addMovie(catalog, movie):
     lt.addLast(catalog['movies'], movie)
     mp.put(catalog['moviesIds'], movie['id'], movie)
 
-def addMovieFilmProducer(catalog, producername, movie):
+def addMovietoMovieFilmProducer(catalog, producername, movie):
     """
     RETO2 - REQ1
     Esta función adiciona una película a la lista de películas producidas
@@ -156,7 +156,7 @@ def addMovieFilmProducer(catalog, producername, movie):
     else:
         producer['average_rating'] = round((producerAvg + float(movieAvg)) / 2,2)
 
-def addDirector(catalog,directorname,movie_id):
+def addMovietoDirector(catalog,directorname,movie_id):
     """
     RETO2 - REQ2
     Esta función adiciona una película a la lista de películas dirigidas
@@ -184,7 +184,7 @@ def addDirector(catalog,directorname,movie_id):
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
 
-def addCountry(catalog,countryname,movie):
+def addMovietoCountry(catalog,countryname,movie):
     """
     RETO2 - REQ5
     Esta función adiciona una película a la lista de películas producidas en un país.
@@ -200,22 +200,17 @@ def addCountry(catalog,countryname,movie):
 
     lt.addLast(country['movies'], movie)
 
-    movies_Ids = catalog['moviesIds']['table']['elements']
-    #print(movies_Ids)
-     
+    "POR REVISAR, INCOMPLETO"
+    movies_Ids = catalog['moviesIds']
+    movie_id_for_search = movie['id']
 
-    for id in movies_Ids:
-        country_movies = country['movies']['elements']
+    entry = mp.get(movies_Ids,movie_id_for_search)
+    movieinfo = me.getValue(entry)
+    print("hola")
 
-        for movie in country_movies:
-            country_movies_id = movie['id']
-            #print("country",country_movies_id)
-            #print("id",id)
-            if country_movies_id == id:
-                print("hola")
-                movie['director_name'] = id['director_name']
-                
-
+    director_name = movieinfo['director_name']
+    movie['director_name'] = director_name
+    
 
 # ==============================
 # Funciones de consulta
@@ -355,3 +350,23 @@ def compareCountriesByName(keyname,country):
         return 1
     else:
         return -1
+
+
+def numeritos(num1,num2):
+    if (num1 == num2):
+        return 0
+    elif num1 > num2:
+        return 1
+    else:
+        return -1
+        
+lista_numeritos = lt.newList("ARRAY_LIST",cmpfunction=numeritos)
+numerito1 = input("Ingrese el primer numero:")
+numerito2 = input("Ingrese el numero:")
+numerito3 = input("Ingrese el numero:")
+numerito4 = input("Ingrese el numero:")
+lt.addLast(lista_numeritos,numerito1)
+lt.addLast(lista_numeritos,numerito2)
+lt.addLast(lista_numeritos,numerito3)
+lt.addLast(lista_numeritos,numerito4)
+print(lista_numeritos)
