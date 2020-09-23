@@ -58,24 +58,6 @@ def loadData(catalog,moviesDetailsFile,moviesCastingFile):
     loadDetails(catalog, moviesDetailsFile)
     loadCasting(catalog, moviesCastingFile)
 
-#def loadFiles(catalog,moviesDetailsFile,moviesCastingFile):
-#    """
-#    Carga cada una de las lineas de ambos archivos de películas.
-#    - Se agrega cada película al catalogo de películas.
-#    - Por cada película se encuentra su productora y por cada
-#      productora, se crea una lista con sus películas
-#    """
-#    t1_start = process_time() #tiempo inicial
-#    moviesDetailsFile = cf.data_dir + moviesDetailsFile
-#    moviesCastingFile = cf.data_dir + moviesCastingFile
-#    input_file = csv.DictReader(open(moviesDetailsFile,encoding="utf-8-sig"),delimiter=";")
- #   input_file2 = csv.DictReader(open(moviesCastinFile,encoding="utf-8-sig"),delimiter=";")
-#
- #   for movie in input_file:
-#
- #       actor1_name;actor1_gender;actor2_name;actor2_gender;actor3_name;actor3_gender;actor4_name;actor4_gender;actor5_name;actor5_gender;actor_number;director_name;director_gender;director_number;producer_name;producer_number;screeplay_name;editor_name
-  #      model.addMovie(catalog, movie)
-    
 def loadDetails(catalog, moviesDetailsFile):
     """
     Carga cada una de las lineas del archivo de películas.
@@ -93,7 +75,7 @@ def loadDetails(catalog, moviesDetailsFile):
         for producer in producers:
             model.addMovietoMovieFilmProducer(catalog, producer.strip(), movie)
         for country in countries:
-            model.addMovietoCountry(catalog,country.strip(),movie)
+            model.addMovietoCountry(catalog, country.strip(), movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -108,11 +90,14 @@ def loadCasting(catalog, moviesCastingFile):
     t1_start = process_time() #tiempo inicial
     moviesCastingFile = cf.data_dir + moviesCastingFile
     input_file = csv.DictReader(open(moviesCastingFile,encoding="utf-8-sig"),delimiter=";")
+
     for movie in input_file:
+#        model.addMovie2(catalog, movie)
         directors = movie['director_name'].split(",") 
         movie_id = movie['id']
         for director in directors:
             model.addMovietoDirector(catalog, director.strip(), movie_id)
+        model.addDirectortoCountry(catalog,movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")

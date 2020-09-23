@@ -24,7 +24,9 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from time import process_time 
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import listiterator as it
 assert config
+
 
 """
 En este archivo definimos los TADs que vamos a usar,
@@ -50,6 +52,7 @@ def newCatalog():
     Retorna el catalogo inicializado.
     """
     catalog = {'movies': None,
+#              'movies2': None,
                'moviesIds': None,
                'producers': None,
                'directors': None,
@@ -57,6 +60,7 @@ def newCatalog():
 
     t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
+#    catalog['movies2'] = lt.newList('SINGLE_LINKED', compareMovies)
     catalog['moviesIds'] = mp.newMap(1000,
                                    maptype='CHAINING',
                                    loadfactor=2,
@@ -65,7 +69,7 @@ def newCatalog():
                                    maptype='CHAINING',
                                    loadfactor=2,
                                    comparefunction=compareProducersByName)
-    catalog['directors'] = mp.newMap(500,
+    catalog['directors'] = mp.newMap(30,
                                 maptype='CHAINING',
                                 loadfactor=2,
                                 comparefunction=compareDirectorsByName)
@@ -131,6 +135,13 @@ def addMovie(catalog, movie):
     """
     lt.addLast(catalog['movies'], movie)
     mp.put(catalog['moviesIds'], movie['id'], movie)
+
+#def addMovie2(catalog, movie):
+#    """
+#    Esta funcion adiciona los datos restantes de una película a la segunda lista
+#    de películas, esto facilita el acceso a los datos del segundo archivo. 
+#    """
+#    lt.addLast(catalog['movies2'], movie)
 
 def addMovietoMovieFilmProducer(catalog, producername, movie):
     """
@@ -200,18 +211,35 @@ def addMovietoCountry(catalog,countryname,movie):
 
     lt.addLast(country['movies'], movie)
 
-    "POR REVISAR, INCOMPLETO"
-    movies_Ids = catalog['moviesIds']
-    movie_id_for_search = movie['id']
+def addDirectortoCountry(catalog,movie):
+    """
+    RETO2 - REQ5
+    Esta función adiciona los datos de una película del segundo archivo
+    a la lista de películas producidas en un país.
+    """
+    countries = catalog['countries']
+    ids = catalog['moviesIds']    
+    movie_id = movie['id']
 
-    entry = mp.get(movies_Ids,movie_id_for_search)
-    movieinfo = me.getValue(entry)
-    print("hola")
+    entry = mp.get(ids,movie_id)
+    movie_info = me.getValue(entry)
+    countries_name = movie_info['production_countries'].split(",") 
+        
+    for country_name in countries_name:
+        entry = mp.get(countries,country_name)
+        country = me.getValue(entry)
+        List_movies_per_country = country['movies']
 
-    director_name = movieinfo['director_name']
-    movie['director_name'] = director_name
+        iterator = it.newIterator(List_movies_per_country)
+        while it.hasNext(iterator):
+
+            specific_dict_movie = it.next(iterator)
+            id_specific_movie = int(specific_dict_movie['id'])
+
+            if id_specific_movie == int(movie_id):  
+                specific_dict_movie.update(movie)
+
     
-
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -351,7 +379,8 @@ def compareCountriesByName(keyname,country):
     else:
         return -1
 
-
+"""
+Funciones para realizar algunas pruebas.
 def numeritos(num1,num2):
     if (num1 == num2):
         return 0
@@ -359,7 +388,8 @@ def numeritos(num1,num2):
         return 1
     else:
         return -1
-        
+
+def Pruebas():        
 lista_numeritos = lt.newList("ARRAY_LIST",cmpfunction=numeritos)
 numerito1 = input("Ingrese el primer numero:")
 numerito2 = input("Ingrese el numero:")
@@ -370,3 +400,4 @@ lt.addLast(lista_numeritos,numerito2)
 lt.addLast(lista_numeritos,numerito3)
 lt.addLast(lista_numeritos,numerito4)
 print(lista_numeritos)
+"""

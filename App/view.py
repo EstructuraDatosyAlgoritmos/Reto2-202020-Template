@@ -27,6 +27,7 @@ from DISClib.DataStructures import listiterator as it
 from App import controller
 assert config
 
+
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones y por cada seleccion
@@ -91,7 +92,7 @@ def printCountryData(country):
         iterator = it.newIterator(country['movies'])
         while it.hasNext(iterator):
             movie = it.next(iterator)
-            print('Titulo: ' + movie['title'] + '  Director: ' + movie['director_name'] + '  Año de producción: ' + movie['release_date'])
+            print('Titulo: ' + movie['title'] + '   Director: ' + movie['director_name'] + '   Fecha de producción: ' + movie['release_date'] )
     else:
         print('No se encontró el país.')
 
