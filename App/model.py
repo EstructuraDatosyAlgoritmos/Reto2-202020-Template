@@ -125,7 +125,6 @@ def newCountry(name):
     country['movies'] = lt.newList('ARRAY_LIST',compareCountriesByName)
     return country
 
-
 # Funciones para agregar informacion al catalogo
 
 def addMovie(catalog, movie):
@@ -195,23 +194,7 @@ def addMovietoDirector(catalog,directorname,movie_id):
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
 
-def addMovietoCountry(catalog,countryname,movie):
-    """
-    RETO2 - REQ5
-    Esta función adiciona una película a la lista de películas producidas en un país.
-    """
-    countries = catalog['countries']
-    existcountry = mp.contains(countries,countryname)
-    if existcountry:
-        entry = mp.get(countries,countryname)
-        country = me.getValue(entry)
-    else:
-        country = newCountry(countryname)
-        mp.put(countries,countryname,country)
-
-    lt.addLast(country['movies'], movie)
-
-def addDirectortoCountry(catalog,movie):
+def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
     Esta función adiciona los datos de una película del segundo archivo
@@ -223,23 +206,22 @@ def addDirectortoCountry(catalog,movie):
 
     entry = mp.get(ids,movie_id)
     movie_info = me.getValue(entry)
-    countries_name = movie_info['production_countries'].split(",") 
-        
-    for country_name in countries_name:
-        entry = mp.get(countries,country_name)
-        country = me.getValue(entry)
-        List_movies_per_country = country['movies']
+    countries_names = movie_info['production_countries'].split(",") 
 
-        iterator = it.newIterator(List_movies_per_country)
-        while it.hasNext(iterator):
+    for countryname in countries_names:
+        countryname = countryname.strip()
+        existcountry = mp.contains(countries,countryname)
 
-            specific_dict_movie = it.next(iterator)
-            id_specific_movie = int(specific_dict_movie['id'])
+        if existcountry:
+            entry = mp.get(countries,countryname)
+            country = me.getValue(entry)
+        else:
+            country = newCountry(countryname)
+            mp.put(countries,countryname,country)
 
-            if id_specific_movie == int(movie_id):  
-                specific_dict_movie.update(movie)
+    movie_info.update(movie)
+    lt.addLast(country['movies'], movie_info)
 
-    
 # ==============================
 # Funciones de consulta
 # ==============================
