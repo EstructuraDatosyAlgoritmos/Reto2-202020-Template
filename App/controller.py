@@ -76,6 +76,8 @@ def loadDetails(catalog, moviesDetailsFile):
             model.addMovietoMovieFilmProducer(catalog, producer.strip(), movie)
 #       for country in countries:
 #           model.addMovietoCountry(catalog, country.strip(), movie)
+        for gender in genres:
+            model.addMovietoGender(catalog, gender.strip(), movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -141,7 +143,12 @@ def directorsSize(catalog):
     return model.directorsSize(catalog)
 def actorssize(catalog):
     return model.actorssize(catalog)
-    
+def GenresSize(catalog):
+    """
+    RETO2 - REQ4
+    Número de géneros leído
+    """
+    return model.genresSize(catalog)
 def countriesSize(catalog):
     """
     RETO2 - REQ5
@@ -171,7 +178,13 @@ def getMoviesByActor(catalog,actorname):
     """
     actorinfo=model.getMoviesByActor(catalog,actorname)
     return actorinfo
-       
+def getMoviesByGender(catalog, gendername):
+    """
+    RETO2 - REQ 4
+    Retorna los géneros de una película
+    """
+    genreinfo = model.getMoviesByGender(catalog,gendername)
+    return genreinfo       
 def getMoviesByCountry(catalog,countryname):
     """
     RETO2 - REQ5
