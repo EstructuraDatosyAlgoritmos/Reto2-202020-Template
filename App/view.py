@@ -27,6 +27,7 @@ from DISClib.DataStructures import listiterator as it
 from App import controller
 assert config
 
+
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones y por cada seleccion
@@ -38,8 +39,11 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
+#moviesCastingFile = 'Movies/MoviesCastingRaw-small.csv'
+moviesCastingFile = 'Movies/AllMoviesCastingRaw.csv'
 
-
+#moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
+moviesDetailsFile = 'Movies/AllMoviesDetailsCleaned.csv'
 
 
 # ___________________________________________________
@@ -48,8 +52,106 @@ operación seleccionada.
 #  el controlador.
 # ___________________________________________________
 
+def printProducerData(producer):
+    """
+    RETO2 - REQ1
+    Imprime las películas de una productora determinada
+    """
+    if producer:
+        print('Productora encontrada: ' + producer['name'])
+        print('Promedio votación películas: ' + str(producer['average_rating']))
+        print('Total de películas: ' + str(lt.size(producer['movies'])))
+        iterator = it.newIterator(producer['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
+    else:
+        print('No se encontró la productora.')
 
+def printDirectorData(director):
+    """
+    RETO2 - REQ2
+    Imprime las películas de un director determinado
+    """
+    if director:
+        print('Director encontrado: ' + director['name'])
+        print('Promedio votación películas: ' + str(director['average_rating']))
+        print('Total de películas: ' + str(lt.size(director['movies'])))
+        iterator = it.newIterator(director['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
+    else:
+        print('No se encontró el director.')
+
+def printCountryData(country):
+    """
+    RETO2 - REQ5
+    Imprime las películas de un país determinado
+    """
+    if country:
+        print('País encontrado: ' + country['name'])
+        print('Total de películas: ' + str(lt.size(country['movies'])))
+        iterator = it.newIterator(country['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '   Director: ' + movie['director_name'] + '   Fecha de producción: ' + movie['release_date'] )
+    else:
+        print('No se encontró el país.')
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
+
+
+def printMenu():
+    print("Bienvenido")
+    print("1- Inicializar Catálogo")
+    print("2- Cargar información en el catálogo")
+    print("3- REQ1: Descubrir productoras de cine.")
+    print("4- REQ2: Conocer a un director. ")
+ #   print("5- REQ3: Conocer a un actor.")
+ #   print("6- REQ4: Entender un género cinematográfico.")
+    print("7- REQ5: Encontrar películas por país.")
+    print("0- Salir")
+
+"""
+Menu principal
+"""
+while True:
+    printMenu()
+    inputs = input('Seleccione una opción para continuar\n')
+
+    if int(inputs[0]) == 1:
+        print("Inicializando Catálogo ....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.initCatalog()
+
+    elif int(inputs[0]) == 2:
+        print("Cargando información de los archivos ....")
+        controller.loadData(cont,moviesDetailsFile,moviesCastingFile)
+        print('Películas cargadas: ' + str(controller.moviesSize(cont)))
+        print('Productoras de Cine cargadas: ' + str(controller.producersSize(cont)))
+        print('Directores de Cine cargados: ' + str(controller.directorsSize(cont)))
+        print('Países cargados: ' + str(controller.countriesSize(cont)))
+
+    elif int(inputs[0]) == 3:
+        producername = input("Nombre de la productora a buscar: ")
+        producerinfo = controller.getMoviesByProducer(cont, producername)
+        printProducerData(producerinfo)
+
+    elif int(inputs[0]) == 4:
+        directorname =  input("Ingrese el nombre del director a buscar: ")
+        directorinfo = controller.getMoviesByDirector(cont, directorname)
+        printDirectorData(directorinfo)
+
+#    elif int(inputs[0]) == 5:
+#    elif int(inputs[0]) == 6:
+    elif int(inputs[0]) == 7:
+        countryname = input("Ingrese el nombre del país a buscar: ")
+        countryinfo = controller.getMoviesByCountry(cont,countryname)
+        printCountryData(countryinfo)
+
+    else:
+        sys.exit(0)
+sys.exit(0)
