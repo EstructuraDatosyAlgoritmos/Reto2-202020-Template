@@ -94,7 +94,24 @@ def loadCasting(catalog, moviesCastingFile):
     for movie in input_file:
 #        model.addMovie2(catalog, movie)
         directors = movie['director_name'].split(",") 
+        actor1=movie['actor1_name'].split(",")
+        actor2=movie['actor2_name'].split(",")
+        actor3=movie['actor3_name'].split(",")
+        actor4=movie['actor4_name'].split(",")
+        actor5=movie['actor5_name'].split(",")
         movie_id = movie['id']
+        for actor in actor1:
+            model.addmovietoactor(catalog,actor,movie_id)
+        for actor in actor2:
+            model.addmovietoactor(catalog,actor,movie_id)
+        for actor in actor3:
+            model.addmovietoactor(catalog,actor,movie_id)
+        for actor in actor4:
+            model.addmovietoactor(catalog,actor,movie_id)
+        for actor in actor5:
+            model.addmovietoactor(catalog,actor,movie_id)
+            
+
         for director in directors:
             model.addMovietoDirector(catalog, director.strip(), movie_id)
         model.addDirectortoCountry(catalog,movie)
@@ -122,6 +139,9 @@ def directorsSize(catalog):
     Numero de directores leido
     """
     return model.directorsSize(catalog)
+def actorssize(catalog):
+    return model.actorssize(catalog)
+    
 def countriesSize(catalog):
     """
     RETO2 - REQ5
@@ -144,6 +164,14 @@ def getMoviesByDirector(catalog,directorname):
     """
     directorinfo = model.getMoviesByDirector(catalog,directorname)
     return directorinfo
+def getMoviesByActor(catalog,actorname):
+    """
+    RETO2 - REQ3
+    Retorna las películas de un actor
+    """
+    actorinfo=model.getMoviesByActor(catalog,actorname)
+    return actorinfo
+       
 def getMoviesByCountry(catalog,countryname):
     """
     RETO2 - REQ5
