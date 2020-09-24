@@ -97,7 +97,7 @@ def loadCasting(catalog, moviesCastingFile):
         movie_id = movie['id']
         for director in directors:
             model.addMovietoDirector(catalog, director.strip(), movie_id)
-        model.addDirectortoCountry(catalog,movie)
+        model.addMovietoCountry(catalog,movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")

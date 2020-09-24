@@ -61,17 +61,17 @@ def newCatalog():
     t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
 #    catalog['movies2'] = lt.newList('SINGLE_LINKED', compareMovies)
-    catalog['moviesIds'] = mp.newMap(1000,
+    catalog['moviesIds'] = mp.newMap(3330,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareMapMovieIds)
-    catalog['producers'] = mp.newMap(500,
+    catalog['producers'] = mp.newMap(1665,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareProducersByName)
-    catalog['directors'] = mp.newMap(30,
+    catalog['directors'] = mp.newMap(1900,
                                 maptype='CHAINING',
-                                loadfactor=2,
+                                loadfactor=100,
                                 comparefunction=compareDirectorsByName)
 #    catalog['actors'] = mp.newMap(1000,
 #                                  maptype='CHAINING',
@@ -81,9 +81,9 @@ def newCatalog():
 #                                 maptype='CHAINING',
 #                                 loadfactor=0.7,
 #                                 comparefunction=compareMapYear)
-    catalog['countries'] = mp.newMap(500,
+    catalog['countries'] = mp.newMap(200,
                                  maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=5,
                                  comparefunction=compareCountriesByName)
 
 
@@ -197,7 +197,7 @@ def addMovietoDirector(catalog,directorname,movie_id):
 def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
-    Esta función adiciona los datos de una película del segundo archivo
+    Esta función adiciona los datos de una película 
     a la lista de películas producidas en un país.
     """
     countries = catalog['countries']
