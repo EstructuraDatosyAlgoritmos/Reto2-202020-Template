@@ -71,11 +71,11 @@ def loadDetails(catalog, moviesDetailsFile):
     for movie in input_file:
         model.addMovie(catalog, movie)
         producers = movie['production_companies'].split(",")  
-        countries = movie['production_countries'].split(",") 
+#       countries = movie['production_countries'].split(",") 
         for producer in producers:
             model.addMovietoMovieFilmProducer(catalog, producer.strip(), movie)
-        for country in countries:
-            model.addMovietoCountry(catalog, country.strip(), movie)
+#       for country in countries:
+#           model.addMovietoCountry(catalog, country.strip(), movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -114,7 +114,7 @@ def loadCasting(catalog, moviesCastingFile):
 
         for director in directors:
             model.addMovietoDirector(catalog, director.strip(), movie_id)
-        model.addDirectortoCountry(catalog,movie)
+        model.addMovietoCountry(catalog,movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")

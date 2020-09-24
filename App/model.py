@@ -62,17 +62,17 @@ def newCatalog():
     t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
 #    catalog['movies2'] = lt.newList('SINGLE_LINKED', compareMovies)
-    catalog['moviesIds'] = mp.newMap(1000,
+    catalog['moviesIds'] = mp.newMap(3330,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareMapMovieIds)
-    catalog['producers'] = mp.newMap(500,
+    catalog['producers'] = mp.newMap(1665,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareProducersByName)
-    catalog['directors'] = mp.newMap(30,
+    catalog['directors'] = mp.newMap(1900,
                                 maptype='CHAINING',
-                                loadfactor=2,
+                                loadfactor=100,
                                 comparefunction=compareDirectorsByName)
     catalog['actors'] = mp.newMap(1000,
                                   maptype='CHAINING',
@@ -82,9 +82,9 @@ def newCatalog():
 #                                 maptype='CHAINING',
 #                                 loadfactor=0.7,
 #                                 comparefunction=compareMapYear)
-    catalog['countries'] = mp.newMap(500,
+    catalog['countries'] = mp.newMap(200,
                                  maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=5,
                                  comparefunction=compareCountriesByName)
 
 
@@ -135,7 +135,6 @@ def newCountry(name):
     country['name'] = name
     country['movies'] = lt.newList('ARRAY_LIST',compareCountriesByName)
     return country
-
 
 # Funciones para agregar informacion al catalogo
 
@@ -205,7 +204,7 @@ def addMovietoDirector(catalog,directorname,movie_id):
         director['average_rating'] = float(movieAvg)
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
-
+        
 def addmovietoactor(catalog,actorname,movie_id):
     actors=catalog['actors']
     directors = catalog['directors']
@@ -229,28 +228,11 @@ def addmovietoactor(catalog,actorname,movie_id):
         actor['average_rating'] = float(movieAvg)
     else:
         actor['average_rating'] = round((actor_mov_Avg + float(movieAvg)) / 2,2)
-
-
-def addMovietoCountry(catalog,countryname,movie):
+        
+def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
-    Esta función adiciona una película a la lista de películas producidas en un país.
-    """
-    countries = catalog['countries']
-    existcountry = mp.contains(countries,countryname)
-    if existcountry:
-        entry = mp.get(countries,countryname)
-        country = me.getValue(entry)
-    else:
-        country = newCountry(countryname)
-        mp.put(countries,countryname,country)
-
-    lt.addLast(country['movies'], movie)
-
-def addDirectortoCountry(catalog,movie):
-    """
-    RETO2 - REQ5
-    Esta función adiciona los datos de una película del segundo archivo
+    Esta función adiciona los datos de una película 
     a la lista de películas producidas en un país.
     """
     countries = catalog['countries']
@@ -259,23 +241,22 @@ def addDirectortoCountry(catalog,movie):
 
     entry = mp.get(ids,movie_id)
     movie_info = me.getValue(entry)
-    countries_name = movie_info['production_countries'].split(",") 
-        
-    for country_name in countries_name:
-        entry = mp.get(countries,country_name)
-        country = me.getValue(entry)
-        List_movies_per_country = country['movies']
+    countries_names = movie_info['production_countries'].split(",") 
 
-        iterator = it.newIterator(List_movies_per_country)
-        while it.hasNext(iterator):
+    for countryname in countries_names:
+        countryname = countryname.strip()
+        existcountry = mp.contains(countries,countryname)
 
-            specific_dict_movie = it.next(iterator)
-            id_specific_movie = int(specific_dict_movie['id'])
+        if existcountry:
+            entry = mp.get(countries,countryname)
+            country = me.getValue(entry)
+        else:
+            country = newCountry(countryname)
+            mp.put(countries,countryname,country)
 
-            if id_specific_movie == int(movie_id):  
-                specific_dict_movie.update(movie)
+    movie_info.update(movie)
+    lt.addLast(country['movies'], movie_info)
 
-    
 # ==============================
 # Funciones de consulta
 # ==============================
