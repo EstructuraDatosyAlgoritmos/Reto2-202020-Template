@@ -78,10 +78,10 @@ def newCatalog():
                                   maptype='CHAINING',
                                   loadfactor=2,
                                   comparefunction=compareActorsByName)
-#    catalog['genres'] = mp.newMap(500,
-#                                 maptype='CHAINING',
-#                                 loadfactor=0.7,
-#                                 comparefunction=compareMapYear)
+    catalog['genres'] = mp.newMap(500,
+                                 maptype='CHAINING',
+                                 loadfactor=2,
+                                 comparefunction=compareGenresByName)
     catalog['countries'] = mp.newMap(200,
                                  maptype='CHAINING',
                                  loadfactor=5,
@@ -125,7 +125,15 @@ def newActor(name):
     actor['name']=name
     actor['movies']=lt.newList('SINGLE_LINKED',compareActorsByName)
     return actor
-
+def newGender(name):
+    """
+    RETO2 - REQ4
+    Crea una nueva estructura para modelar las películas de un género y su promedio de ratings
+    """
+    gender = {"name" : "", "movies": None, "average_rating": 0}
+    gender["name"] = name
+    gender["movies"] = lt.newlist("SINGLE_LINKED", compareGenresByName )
+    return gender
 def newCountry(name):
     """
     RETO2 - REQ5
@@ -228,7 +236,32 @@ def addmovietoactor(catalog,actorname,movie_id):
         actor['average_rating'] = float(movieAvg)
     else:
         actor['average_rating'] = round((actor_mov_Avg + float(movieAvg)) / 2,2)
-        
+def addMovietoGender(catalog,gendername,movie_id):
+    """
+    RETO2 - REQ4 
+    La función adiciona una película a la lista de películas asociadas con el género dado.
+    Cuando se adiciona la película se actualiza el promedio del género
+    """
+    genres = catalog['genres']
+    movies_ids = catalog['moviesIds']
+    entry = mp.get(movies_ids,movie_id)
+    movie = me.getValue(entry)
+
+    existgender = mp.contains(genres,gendername)
+    if existgender:
+        entry = mp.get(genres,gendername)
+        gender = me.getValue(entry)
+    else:
+        gender = newGender(gendername)
+        mp.put(genres,gendername,gender)      
+    lt.addLast(gender['movies'], movie)
+
+    genderAvg = gender['average_rating']
+    movieAvg = movie['vote_average']
+    if (genderAvg == 0.0):
+        gender['average_rating'] = float(movieAvg)
+    else:
+        gender['average_rating'] = round((genderAvg + float(movieAvg)) / 2,2)       
 def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
@@ -297,7 +330,17 @@ def getMoviesByActor(catalog,actorname):
         return me.getValue(actor)
     return None
 
-
+def getMoviesByGender(catalog,gendername):
+    """
+    RETP2 - REQ4
+    Retorna las películas asociadas a un género ingresado
+    """
+    t1_start = process_time() #tiempo inicial
+    gender = mp.get(catalog["genres"], gendername)
+    if gender:
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ", t1_stop-t1_start," segundos")
+        return me.getValue(gender)
 def getMoviesByCountry(catalog,countryname):
     """
     RETO2 - REQ5
@@ -330,7 +373,12 @@ def directorsSize(catalog):
     return mp.size(catalog['directors'])
 def actorssize(catalog):
     return mp.size(catalog['actors'])
-    
+def genresSize(catalog):
+    """
+    RETO2 - REQ4
+    Número de géneros en un catálogo
+    """
+    return mp.size(catalog["genres"])
 def countriesSize(catalog):
     """
     RETO2 - REQ5
@@ -410,7 +458,19 @@ def compareActorsByName(keyname, actor):
         return 1
     else:
         return -1
+def compareGenresByName(keyname, gender):
+    """
+    RETO2 - REQ2
+    
+    """
 
+    genderEntry = me.getKey(gender)
+    if (keyname == genderEntry):
+        return 0
+    elif (keyname > genderEntry):
+        return 1
+    else:
+        return -1
 def compareCountriesByName(keyname,country):
     """
     RETO2 - REQ5
