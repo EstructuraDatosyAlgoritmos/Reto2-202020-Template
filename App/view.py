@@ -96,7 +96,21 @@ def printActorData(actor):
             print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
     else:
          print('No se encontró el actor/actriz.')
-
+def printGenderData(gender):
+    """
+    RETO2 - REQ4
+    Imprime las películas de un género determinado
+    """
+    if gender:
+        print('Películas asociadas encontradas: ' + gender['name'])
+        print('Promedio votación películas: ' + str(gender['average_rating']))
+        print('Total de películas: ' + str(lt.size(gender['movies'])))
+        iterator = it.newIterator(gender['movies'])
+        while it.hasNext(iterator):
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
+    else:
+        print('No se encontró película asociada.')
 def printCountryData(country):
     """
     RETO2 - REQ5
@@ -124,7 +138,7 @@ def printMenu():
     print("3- REQ1: Descubrir productoras de cine.")
     print("4- REQ2: Conocer a un director. ")
     print("5- REQ3: Conocer a un actor.")
- #   print("6- REQ4: Entender un género cinematográfico.")
+    print("6- REQ4: Entender un género cinematográfico.")
     print("7- REQ5: Encontrar películas por país.")
     print("0- Salir")
 
@@ -164,7 +178,10 @@ while True:
         actorinfo = controller.getMoviesByActor(cont, actorname)
         printActorData(actorinfo)
 
-#    elif int(inputs[0]) == 6:
+    elif int(inputs[0]) == 6:
+        gendername = input("Ingrese el nombre del género a buscar: ")
+        genreinfo = controller.getMoviesByGender(cont,gendername)
+        printGenderData(genreinfo)
     elif int(inputs[0]) == 7:
         countryname = input("Ingrese el nombre del país a buscar: ")
         countryinfo = controller.getMoviesByCountry(cont,countryname)
