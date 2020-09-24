@@ -24,7 +24,9 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from time import process_time 
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import listiterator as it
 assert config
+
 
 """
 En este archivo definimos los TADs que vamos a usar,
@@ -46,24 +48,27 @@ def newCatalog():
     Retorna el catalogo inicializado.
     """
     catalog = {'movies': None,
+#              'movies2': None,
                'moviesIds': None,
                'producers': None,
                'directors': None,
+               "genres": None,
                'countries': None}
 
     t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
-    catalog['moviesIds'] = mp.newMap(1000,
+#    catalog['movies2'] = lt.newList('SINGLE_LINKED', compareMovies)
+    catalog['moviesIds'] = mp.newMap(3330,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareMapMovieIds)
-    catalog['producers'] = mp.newMap(500,
+    catalog['producers'] = mp.newMap(1665,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=100,
                                    comparefunction=compareProducersByName)
-    catalog['directors'] = mp.newMap(500,
+    catalog['directors'] = mp.newMap(1900,
                                 maptype='CHAINING',
-                                loadfactor=2,
+                                loadfactor=100,
                                 comparefunction=compareDirectorsByName)
 #    catalog['actors'] = mp.newMap(1000,
 #                                  maptype='CHAINING',
@@ -73,9 +78,9 @@ def newCatalog():
                                  maptype='CHAINING',
                                  loadfactor=2,
                                  comparefunction=compareGenresByName)
-    catalog['countries'] = mp.newMap(500,
+    catalog['countries'] = mp.newMap(200,
                                  maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=5,
                                  comparefunction=compareCountriesByName)
 
 
@@ -125,7 +130,6 @@ def newCountry(name):
     country['movies'] = lt.newList('ARRAY_LIST',compareCountriesByName)
     return country
 
-
 # Funciones para agregar informacion al catalogo
 
 def addMovie(catalog, movie):
@@ -136,7 +140,14 @@ def addMovie(catalog, movie):
     lt.addLast(catalog['movies'], movie)
     mp.put(catalog['moviesIds'], movie['id'], movie)
 
-def addMovieFilmProducer(catalog, producername, movie):
+#def addMovie2(catalog, movie):
+#    """
+#    Esta funcion adiciona los datos restantes de una película a la segunda lista
+#    de películas, esto facilita el acceso a los datos del segundo archivo. 
+#    """
+#    lt.addLast(catalog['movies2'], movie)
+
+def addMovietoMovieFilmProducer(catalog, producername, movie):
     """
     RETO2 - REQ1
     Esta función adiciona una película a la lista de películas producidas
@@ -160,7 +171,7 @@ def addMovieFilmProducer(catalog, producername, movie):
     else:
         producer['average_rating'] = round((producerAvg + float(movieAvg)) / 2,2)
 
-def addDirector(catalog,directorname,movie_id):
+def addMovietoDirector(catalog,directorname,movie_id):
     """
     RETO2 - REQ2
     Esta función adiciona una película a la lista de películas dirigidas
@@ -188,20 +199,24 @@ def addDirector(catalog,directorname,movie_id):
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
 
-def addGender(catalog,genrename,movie):
+def addMovietoGender(catalog,gendername,movie_id):
     """
     RETO2 - REQ4 
     La función adiciona una película a la lista de películas asociadas con el género dado.
     Cuando se adiciona la película se actualiza el promedio del género
     """
     genres = catalog['genres']
-    existgender = mp.contains(genres,genrename)
+    movies_ids = catalog['moviesIds']
+    entry = mp.get(movies_ids,movie_id)
+    movie = me.getValue(entry)
+
+    existgender = mp.contains(genres,gendername)
     if existgender:
-        entry = mp.get(genres,genrename)
+        entry = mp.get(genres,gendername)
         gender = me.getValue(entry)
     else:
-        gender = newGender(genrename)
-        mp.put(genres,genrename,gender)      
+        gender = newGender(gendername)
+        mp.put(genres,gendername,gender)      
     lt.addLast(gender['movies'], movie)
 
     genderAvg = gender['average_rating']
@@ -211,38 +226,33 @@ def addGender(catalog,genrename,movie):
     else:
         gender['average_rating'] = round((genderAvg + float(movieAvg)) / 2,2)
 
-def addCountry(catalog,countryname,movie):
+def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
-    Esta función adiciona una película a la lista de películas producidas en un país.
+    Esta función adiciona los datos de una película 
+    a la lista de películas producidas en un país.
     """
     countries = catalog['countries']
-    existcountry = mp.contains(countries,countryname)
-    if existcountry:
-        entry = mp.get(countries,countryname)
-        country = me.getValue(entry)
-    else:
-        country = newCountry(countryname)
-        mp.put(countries,countryname,country)
+    ids = catalog['moviesIds']    
+    movie_id = movie['id']
 
-    lt.addLast(country['movies'], movie)
+    entry = mp.get(ids,movie_id)
+    movie_info = me.getValue(entry)
+    countries_names = movie_info['production_countries'].split(",") 
 
-    movies_Ids = catalog['moviesIds']['table']['elements']
-    #print(movies_Ids)
-     
+    for countryname in countries_names:
+        countryname = countryname.strip()
+        existcountry = mp.contains(countries,countryname)
 
-    for id in movies_Ids:
-        country_movies = country['movies']['elements']
+        if existcountry:
+            entry = mp.get(countries,countryname)
+            country = me.getValue(entry)
+        else:
+            country = newCountry(countryname)
+            mp.put(countries,countryname,country)
 
-        for movie in country_movies:
-            country_movies_id = movie['id']
-            #print("country",country_movies_id)
-            #print("id",id)
-            if country_movies_id == id:
-                print("hola")
-                movie['director_name'] = id['director_name']
-                
-
+    movie_info.update(movie)
+    lt.addLast(country['movies'], movie_info)
 
 # ==============================
 # Funciones de consulta
@@ -273,18 +283,17 @@ def getMoviesByDirector(catalog,directorname):
         print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
         return me.getValue(director)
     return None
-def getMoviesByGender(catalog,genrename):
+def getMoviesByGender(catalog,gendername):
     """
     RETP2 - REQ4
     Retorna las películas asociadas a un género ingresado
     """
     t1_start = process_time() #tiempo inicial
-    gender = mp.get(catalog["genres"], genrename)
+    gender = mp.get(catalog["genres"], gendername)
     if gender:
         t1_stop = process_time() #tiempo final
         print("Tiempo de ejecución ", t1_stop-t1_start," segundos")
         return me.getValue(gender)
-    return None
 def getMoviesByCountry(catalog,countryname):
     """
     RETO2 - REQ5
@@ -385,12 +394,10 @@ def compareDirectorsByName(keyname, director):
         return 1
     else:
         return -1
-
 def compareGenresByName(keyname, gender):
     """
     RETO2 - REQ2
-    Compara dos nombres de géneros. El primero es una cadena
-    y el segundo un entry de un map
+    
     """
 
     genderEntry = me.getKey(gender)
@@ -400,7 +407,6 @@ def compareGenresByName(keyname, gender):
         return 1
     else:
         return -1
-
 def compareCountriesByName(keyname,country):
     """
     RETO2 - REQ5
@@ -414,3 +420,25 @@ def compareCountriesByName(keyname,country):
         return 1
     else:
         return -1
+
+"""
+Funciones para realizar algunas pruebas.
+def numeritos(num1,num2):
+    if (num1 == num2):
+        return 0
+    elif num1 > num2:
+        return 1
+    else:
+        return -1
+def Pruebas():        
+lista_numeritos = lt.newList("ARRAY_LIST",cmpfunction=numeritos)
+numerito1 = input("Ingrese el primer numero:")
+numerito2 = input("Ingrese el numero:")
+numerito3 = input("Ingrese el numero:")
+numerito4 = input("Ingrese el numero:")
+lt.addLast(lista_numeritos,numerito1)
+lt.addLast(lista_numeritos,numerito2)
+lt.addLast(lista_numeritos,numerito3)
+lt.addLast(lista_numeritos,numerito4)
+print(lista_numeritos)
+"""

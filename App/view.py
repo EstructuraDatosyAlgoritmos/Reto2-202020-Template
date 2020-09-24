@@ -27,6 +27,7 @@ from DISClib.DataStructures import listiterator as it
 from App import controller
 assert config
 
+
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones y por cada seleccion
@@ -39,7 +40,10 @@ operación seleccionada.
 # ___________________________________________________
 
 moviesCastingFile = 'Movies/MoviesCastingRaw-small.csv'
+#moviesCastingFile = 'Movies/AllMoviesCastingRaw.csv'
+
 moviesDetailsFile = 'Movies/SmallMoviesDetailsCleaned.csv'
+#moviesDetailsFile = 'Movies/AllMoviesDetailsCleaned.csv'
 
 
 # ___________________________________________________
@@ -107,7 +111,7 @@ def printCountryData(country):
         iterator = it.newIterator(country['movies'])
         while it.hasNext(iterator):
             movie = it.next(iterator)
-            print('Titulo: ' + movie['title'] + '  Director: ' + movie['director_name'] + '  Año de producción: ' + movie['release_date'])
+            print('Titulo: ' + movie['title'] + '   Director: ' + movie['director_name'] + '   Fecha de producción: ' + movie['release_date'] )
     else:
         print('No se encontró el país.')
 
@@ -160,8 +164,8 @@ while True:
 
 #    elif int(inputs[0]) == 5:
     elif int(inputs[0]) == 6:
-        genrename = input("Ingrese el nombre del género a buscar: ")
-        genreinfo = controller.getMoviesByGender(cont,genrename)
+        gendername = input("Ingrese el nombre del género a buscar: ")
+        genreinfo = controller.getMoviesByGender(cont,gendername)
         printGenderData(genreinfo)
     elif int(inputs[0]) == 7:
         countryname = input("Ingrese el nombre del país a buscar: ")

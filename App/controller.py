@@ -57,7 +57,7 @@ def loadData(catalog,moviesDetailsFile,moviesCastingFile):
     """
     loadDetails(catalog, moviesDetailsFile)
     loadCasting(catalog, moviesCastingFile)
-    
+
 def loadDetails(catalog, moviesDetailsFile):
     """
     Carga cada una de las lineas del archivo de películas.
@@ -70,15 +70,12 @@ def loadDetails(catalog, moviesDetailsFile):
     input_file = csv.DictReader(open(moviesDetailsFile,encoding="utf-8-sig"),delimiter=";")
     for movie in input_file:
         model.addMovie(catalog, movie)
-        producers = movie['production_companies'].split(",")
-        genres=movie["genres"].split(",")
-        countries = movie['production_countries'].split(",") 
+        producers = movie['production_companies'].split(",")  
+       countries = movie['production_countries'].split(",") 
         for producer in producers:
-            model.addMovieFilmProducer(catalog, producer.strip(), movie)
-        for genre in genres:
-            model.addGender(catalog,genre.strip(),movie)
-        for country in countries:
-            model.addCountry(catalog,country.strip(),movie)
+            model.addMovietoMovieFilmProducer(catalog, producer.strip(), movie)
+       for country in countries:
+           model.addMovietoCountry(catalog, country.strip(), movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -93,11 +90,14 @@ def loadCasting(catalog, moviesCastingFile):
     t1_start = process_time() #tiempo inicial
     moviesCastingFile = cf.data_dir + moviesCastingFile
     input_file = csv.DictReader(open(moviesCastingFile,encoding="utf-8-sig"),delimiter=";")
+
     for movie in input_file:
+#        model.addMovie2(catalog, movie)
         directors = movie['director_name'].split(",") 
         movie_id = movie['id']
         for director in directors:
-            model.addDirector(catalog, director.strip(), movie_id)
+            model.addMovietoDirector(catalog, director.strip(), movie_id)
+        model.addMovietoCountry(catalog,movie)
 
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
@@ -128,7 +128,6 @@ def GenresSize(catalog):
     Número de géneros leído
     """
     return model.genresSize(catalog)
-
 def countriesSize(catalog):
     """
     RETO2 - REQ5
@@ -151,12 +150,12 @@ def getMoviesByDirector(catalog,directorname):
     """
     directorinfo = model.getMoviesByDirector(catalog,directorname)
     return directorinfo
-def getMoviesByGender(catalog, genrename):
+def getMoviesByGender(catalog, gendername):
     """
     RETO2 - REQ 4
     Retorna los géneros de una película
     """
-    genreinfo = model.getMoviesByGender(catalog,genrename)
+    genreinfo = model.getMoviesByGender(catalog,gendername)
     return genreinfo
 def getMoviesByCountry(catalog,countryname):
     """
