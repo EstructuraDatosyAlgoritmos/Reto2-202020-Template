@@ -84,6 +84,19 @@ def printDirectorData(director):
     else:
         print('No se encontró el director.')
 
+def printActorData(actor):
+    if actor:
+        print('Actor encontrado: ' + actor['name'])
+        print('Promedio votación películas: ' + str(actor['average_rating']))
+        print('Total de películas: ' + str(lt.size(actor['movies'])))
+        iterator = it.newIterator(actor['movies'])
+        while it.hasNext(iterator):
+
+            movie = it.next(iterator)
+            print('Titulo: ' + movie['title'] + '  Avg. Rating: ' + movie['vote_average'])
+    else:
+         print('No se encontró el actor/actriz.')
+
 def printCountryData(country):
     """
     RETO2 - REQ5
@@ -110,7 +123,7 @@ def printMenu():
     print("2- Cargar información en el catálogo")
     print("3- REQ1: Descubrir productoras de cine.")
     print("4- REQ2: Conocer a un director. ")
- #   print("5- REQ3: Conocer a un actor.")
+    print("5- REQ3: Conocer a un actor.")
  #   print("6- REQ4: Entender un género cinematográfico.")
     print("7- REQ5: Encontrar películas por país.")
     print("0- Salir")
@@ -133,6 +146,7 @@ while True:
         print('Películas cargadas: ' + str(controller.moviesSize(cont)))
         print('Productoras de Cine cargadas: ' + str(controller.producersSize(cont)))
         print('Directores de Cine cargados: ' + str(controller.directorsSize(cont)))
+        print('Actores de Cine cargados: ' + str(controller.actorssize(cont)))
         print('Países cargados: ' + str(controller.countriesSize(cont)))
 
     elif int(inputs[0]) == 3:
@@ -145,7 +159,11 @@ while True:
         directorinfo = controller.getMoviesByDirector(cont, directorname)
         printDirectorData(directorinfo)
 
-#    elif int(inputs[0]) == 5:
+    elif int(inputs[0]) == 5:
+        actorname =  input("Ingrese el nombre del actor/actriz a buscar: ")
+        actorinfo = controller.getMoviesByActor(cont, actorname)
+        printActorData(actorinfo)
+
 #    elif int(inputs[0]) == 6:
     elif int(inputs[0]) == 7:
         countryname = input("Ingrese el nombre del país a buscar: ")

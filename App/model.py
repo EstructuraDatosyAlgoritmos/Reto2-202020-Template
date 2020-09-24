@@ -56,7 +56,8 @@ def newCatalog():
                'moviesIds': None,
                'producers': None,
                'directors': None,
-               'countries': None}
+               'countries': None,
+               'actors':None}
 
     t1_start = process_time() #tiempo inicial
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareMovies)
@@ -73,10 +74,10 @@ def newCatalog():
                                 maptype='CHAINING',
                                 loadfactor=100,
                                 comparefunction=compareDirectorsByName)
-#    catalog['actors'] = mp.newMap(1000,
-#                                  maptype='CHAINING',
-#                                  loadfactor=0.7,
-#                                  comparefunction=compareTagIds)
+    catalog['actors'] = mp.newMap(1000,
+                                  maptype='CHAINING',
+                                  loadfactor=2,
+                                  comparefunction=compareActorsByName)
 #    catalog['genres'] = mp.newMap(500,
 #                                 maptype='CHAINING',
 #                                 loadfactor=0.7,
@@ -114,6 +115,16 @@ def newDirector(name):
     director['name'] = name
     director['movies'] = lt.newList('SINGLE_LINKED',compareDirectorsByName )
     return director
+
+def newActor(name):
+    """
+    RETO2 - REQ3
+    Crea una nueva estructura para modelar las películas de un actor
+    """
+    actor={'name':"",'movies':None,'average_rating':0 }  #,'most collaborations':""
+    actor['name']=name
+    actor['movies']=lt.newList('SINGLE_LINKED',compareActorsByName)
+    return actor
 
 def newCountry(name):
     """
@@ -193,7 +204,31 @@ def addMovietoDirector(catalog,directorname,movie_id):
         director['average_rating'] = float(movieAvg)
     else:
         director['average_rating'] = round((directorAvg + float(movieAvg)) / 2,2)
+        
+def addmovietoactor(catalog,actorname,movie_id):
+    actors=catalog['actors']
+    directors = catalog['directors']
+    movies_ids = catalog['moviesIds']
+    entry = mp.get(movies_ids,movie_id)
+    movie = me.getValue(entry)
 
+    existactor = mp.contains(actors,actorname)
+    if existactor:
+        entry = mp.get(actors,actorname)
+        actor = me.getValue(entry)
+    else:
+        actor = newActor(actorname)
+        mp.put(catalog['actors'],actorname,actor)
+    lt.addLast(actor['movies'], movie)
+    
+
+    actor_mov_Avg = actor['average_rating']
+    movieAvg = movie['vote_average']
+    if (actor_mov_Avg == 0.0):
+        actor['average_rating'] = float(movieAvg)
+    else:
+        actor['average_rating'] = round((actor_mov_Avg + float(movieAvg)) / 2,2)
+        
 def addMovietoCountry(catalog,movie):
     """
     RETO2 - REQ5
@@ -252,6 +287,17 @@ def getMoviesByDirector(catalog,directorname):
         return me.getValue(director)
     return None
 
+def getMoviesByActor(catalog,actorname):
+    t1_start = process_time() #tiempo inicial
+    actor = mp.get(catalog['actors'], actorname)
+    #director=
+    if actor:
+        t1_stop = process_time() #tiempo final
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
+        return me.getValue(actor)
+    return None
+
+
 def getMoviesByCountry(catalog,countryname):
     """
     RETO2 - REQ5
@@ -282,6 +328,9 @@ def directorsSize(catalog):
     Numero de directores en el catalogo
     """
     return mp.size(catalog['directors'])
+def actorssize(catalog):
+    return mp.size(catalog['actors'])
+    
 def countriesSize(catalog):
     """
     RETO2 - REQ5
@@ -343,6 +392,21 @@ def compareDirectorsByName(keyname, director):
     if (keyname == direcEntry):
         return 0
     elif (keyname > direcEntry):
+        return 1
+    else:
+        return -1
+
+def compareActorsByName(keyname, actor):
+    """
+    RETO2 - REQ3
+    Compara dos nombres de actores. El primero es una cadena
+    y el segundo un entry de un map
+    """
+
+    actEntry = me.getKey(actor)
+    if (keyname == actEntry):
+        return 0
+    elif (keyname > actEntry):
         return 1
     else:
         return -1
